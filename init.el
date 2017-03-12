@@ -26,7 +26,7 @@
  '(custom-enabled-themes (quote (dichromacy)))
  '(package-selected-packages
    (quote
-    (org-bullets hydra pkg-info epl magit magit-popup git-commit with-editor dash async projectile use-package))))
+    (projectile-rails rake f s inf-ruby inflections helm-projectile helm helm-core popup typo rvm rubocop enh-ruby-mode org-beautify-theme org-bullets hydra pkg-info epl magit magit-popup git-commit with-editor dash async projectile use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -53,6 +53,13 @@
 (setq projectile-keymap-prefix (kbd "C-c p"))
 (projectile-global-mode)
 (setq projectile-completion-system 'default)
+
+(quelpa 'helm)
+(quelpa 'helm-projectile)
+
+(require 'helm)
+(helm-mode)
+(require 'helm-projectile)
 
 (display-time-mode t)
 
@@ -99,15 +106,6 @@
     ("6" (find-file "~/Dropbox/gesta/2016.org") "2016")
     ("7" (find-file "~/Dropbox/gesta/2017.org") "2017")))
 
-;; theme
-(quelpa 'silkworm-theme)
-
-(defun theme-init ()
-  (load-theme 'silkworm t)
-)
-
-(add-hook 'after-init-hook 'theme-init)
-
 ;; margins
 (setq-default left-margin-width 4 right-margin-width 1)
 (set-window-buffer nil (current-buffer))
@@ -129,7 +127,20 @@
     ("l" (linum-mode) "linum")
     ("o" (org-mode) "org")
     ("p" (paredit-mode) "paredit")
+    ("r" (enh-ruby-mode) "ruby")
     ("g" (my/margins) "margins")))
+
+;; Instead of typo-mode
+(add-to-list 'load-path "~/.emacs.d/lisp/")
+(require 'smart-quotes)
+
+(global-set-key
+  (kbd "C-c q")
+  (defhydra hydra-quotatons (:color blue)
+    "quotations"
+    ("j" (insert "«") "«")
+    ("k" (insert "»") "»")
+    ("." (insert "…") "…")))
 
 ;; http://www.howardism.org/Technical/Emacs/orgmode-wordprocessor.html
 
@@ -142,3 +153,50 @@
 (quelpa 'org-bullets)
 
 (require 'org-bullets)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+
+;;
+(defun my-text-mode-hook ()
+  (linum-mode -1)
+  (auto-fill-mode 1)
+  (set-input-method "TeX")
+  (setq line-spacing 5)
+  (set-frame-font "Georgia 16")
+  (set-face-font 'org-level-4 "Georgia 16")
+  (set-face-foreground 'org-level-4 "dark cyan")
+  (set-face-font 'org-level-3 "Georgia 18")
+  (set-face-foreground 'org-level-3 "dark blue")
+  (set-face-font 'org-level-2 "Georgia 20")
+  (set-face-foreground 'org-level-2 "dark blue")
+  (set-face-font 'org-level-1 "Georgia 22")
+  (set-face-foreground 'org-level-1 "dark blue")
+  (org-bullets-mode 1)
+  (my/margins)
+  (turn-on-smart-quotes)
+)
+
+(add-hook 'text-mode-hook 'my-text-mode-hook)
+
+;;
+
+(defun my-code-mode-hook ()
+  (set-frame-font "Courier 12")
+  (linum-mode 1)
+  (setq line-spacing nil)
+)
+
+(quelpa 'enh-ruby-mode)
+(quelpa 'rubocop)
+(quelpa 'rvm)
+(quelpa 'projectile-rails)
+(projectile-rails-global-mode)
+
+(add-hook 'enh-ruby-mode-hook 'my-code-mode-hook)
+(add-hook 'enh-ruby-mode-hook
+  (lambda () (rvm-activate-corresponding-ruby)))
+(add-hook 'enh-ruby-mode-hook 'rubocop-mode)
+
+(add-to-list 'auto-mode-alist '("\\.rb$" . enh-ruby-mode))
+(add-to-list 'interpreter-mode-alist '("ruby" . enh-ruby-mode))
+
+(setq ruby-deep-indent-paren nil)
