@@ -127,8 +127,11 @@
     ("l" (linum-mode) "linum")
     ("o" (org-mode) "org")
     ("p" (paredit-mode) "paredit")
+    ("qs" (smart-quotes-mode 1) "smart-quotes ON")
+    ("qd" (smart-quotes-mode -1) "smart-quotes OFF")
     ("r" (enh-ruby-mode) "ruby")
-    ("g" (my/margins) "margins")))
+    ("g" (my/margins) "margins")
+    ))
 
 ;; Instead of typo-mode
 (add-to-list 'load-path "~/.emacs.d/lisp/")
