@@ -200,3 +200,8 @@
 (add-to-list 'interpreter-mode-alist '("ruby" . enh-ruby-mode))
 
 (setq ruby-deep-indent-paren nil)
+
+;;
+;; http://www.virtuouscode.com/2010/04/23/daemonic-emacs/
+;; http://www.virtuouscode.com/2011/10/27/running-emacs-as-a-server-emacs-reboot-15/
+(server-start)
